@@ -1,0 +1,1636 @@
+==========
+Args:Namespace(abd_dan=['cam', 'pam'], abd_dan_no_head=False, abd_dim=1024, abd_np=2, adam_beta1=0.9, adam_beta2=0.999, arch='resnet50', branches=['global', 'abd'], compatibility=False, criterion='htri', cuhk03_classic_split=False, cuhk03_labeled=False, dan_dan=[], dan_dan_no_head=False, dan_dim=1024, data_augment=['crop', 'random-erase'], dropout=0.5, eval_freq=-1, evaluate=False, fixbase=False, fixbase_epoch=10, flip_eval=True, gamma=0.1, global_dim=1024, global_max_pooling=False, gpu_devices='0', height=384, htri_only=False, label_smooth=True, lambda_htri=0.1, lambda_xent=1, load_weights='', lr=0.0003, margin=1.2, max_epoch=80, momentum=0.9, np_dim=1024, np_max_pooling=False, np_np=2, np_with_global=False, num_instances=4, of_beta=1e-06, of_position=['before', 'after', 'cam', 'pam', 'intermediate'], of_start_epoch=23, open_layers=['classifier'], optim='adam', ow_beta=0.001, pool_tracklet_features='avg', print_freq=10, resume='', rmsprop_alpha=0.99, root='data', sample_method='evenly', save_dir='path/to/dir/jpf5', seed=1, seq_len=15, sgd_dampening=0, sgd_nesterov=False, shallow_cam=True, source_names=['market1501'], split_id=0, start_epoch=0, start_eval=0, stepsize=[20, 40], target_names=['market1501'], test_batch_size=100, train_batch_size=8, train_sampler='', use_avai_gpus=False, use_cpu=False, use_metric_cuhk03=False, use_of=True, use_ow=True, visualize_ranks=False, weight_decay=0.0005, width=128, workers=0)
+==========
+Currently using GPU 0
+Initializing image data manager
+Using augmentation: {'crop', 'random-erase'}
+Using transform: Compose(
+    <torchreid.transforms.Random2DTranslation object at 0x000001A61CD3AC88>
+    RandomHorizontalFlip(p=0.5)
+    ToTensor()
+    Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    <torchreid.transforms.RandomErasing object at 0x000001A61CD33FD0>
+)
+=> Initializing TRAIN (source) datasets
+=> Market1501 loaded
+Dataset statistics:
+  ----------------------------------------
+  subset   | # ids | # images | # cameras
+  ----------------------------------------
+  train    |    38 |      603 |         6
+  query    |   750 |     3368 |         6
+  gallery  |   751 |    15913 |         6
+  ----------------------------------------
+!!! Using RandomIdentitySampler !!!
+=> Initializing TEST (target) datasets
+=> Market1501 loaded
+Dataset statistics:
+  ----------------------------------------
+  subset   | # ids | # images | # cameras
+  ----------------------------------------
+  train    |    38 |      603 |         6
+  query    |   750 |     3368 |         6
+  gallery  |   751 |    15913 |         6
+  ----------------------------------------
+
+
+  **************** Summary ****************
+  train names      : ['market1501']
+  # train datasets : 1
+  # train ids      : 38
+  # train images   : 603
+  # train cameras  : 6
+  test names       : ['market1501']
+  *****************************************
+
+
+Initializing model: resnet50
+Initialized model with pretrained weights from https://download.pytorch.org/models/resnet50-19c8e357.pth
+MultiBranchResNet(
+  (common_branch): ResNetCommonBranch(
+    (backbone1): Sequential(
+      (0): Conv2d(3, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+      (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+      (4): Sequential(
+        (0): Bottleneck(
+          (conv1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+          (downsample): Sequential(
+            (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (2): Bottleneck(
+          (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+      )
+    )
+    (shallow_cam): ShallowCAM(
+      (_cam_module): CAM_Module(
+        (softmax): Softmax(dim=-1)
+      )
+    )
+    (backbone2): Sequential(
+      (0): Sequential(
+        (0): Bottleneck(
+          (conv1): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+          (downsample): Sequential(
+            (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (2): Bottleneck(
+          (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (3): Bottleneck(
+          (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+      )
+      (1): Sequential(
+        (0): Bottleneck(
+          (conv1): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+          (downsample): Sequential(
+            (0): Conv2d(512, 1024, kernel_size=(1, 1), stride=(2, 2), bias=False)
+            (1): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (2): Bottleneck(
+          (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (3): Bottleneck(
+          (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (4): Bottleneck(
+          (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+        (5): Bottleneck(
+          (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (relu): ReLU()
+        )
+      )
+    )
+  )
+  (branches): ModuleList(
+    (0): Sequential(
+      (0): ResNetDeepBranch(
+        (backbone): Sequential(
+          (0): Bottleneck(
+            (conv1): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (relu): ReLU()
+            (downsample): Sequential(
+              (0): Conv2d(1024, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (1): Bottleneck(
+            (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (relu): ReLU()
+          )
+          (2): Bottleneck(
+            (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (relu): ReLU()
+          )
+        )
+      )
+      (1): GlobalBranch(
+        (fc): Sequential(
+          (0): Linear(in_features=2048, out_features=1024, bias=True)
+          (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace=True)
+          (3): Dropout(p=0.5, inplace=False)
+        )
+        (avgpool): AdaptiveAvgPool2d(output_size=1)
+        (classifier): Linear(in_features=1024, out_features=38, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): ResNetDeepBranch(
+        (backbone): Sequential(
+          (0): Bottleneck(
+            (conv1): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (relu): ReLU()
+            (downsample): Sequential(
+              (0): Conv2d(1024, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (1): Bottleneck(
+            (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (relu): ReLU()
+          )
+          (2): Bottleneck(
+            (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (relu): ReLU()
+          )
+        )
+      )
+      (1): ABDBranch(
+        (reduction): Sequential(
+          (0): Conv2d(2048, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace=True)
+        )
+        (before_module): DANetHead(
+          (conv5c): Sequential(
+            (0): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (attention_module): Identity()
+          (conv52): Sequential(
+            (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (conv7): Sequential(
+            (0): Dropout2d(p=0.1, inplace=False)
+            (1): Conv2d(512, 1024, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+        (cam_module): DANetHead(
+          (conv5c): Sequential(
+            (0): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (attention_module): CAM_Module(
+            (softmax): Softmax(dim=-1)
+          )
+          (conv52): Sequential(
+            (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (conv7): Sequential(
+            (0): Dropout2d(p=0.1, inplace=False)
+            (1): Conv2d(512, 1024, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+        (pam_module): DANetHead(
+          (conv5c): Sequential(
+            (0): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (attention_module): PAM_Module(
+            (query_conv): Conv2d(512, 64, kernel_size=(1, 1), stride=(1, 1))
+            (key_conv): Conv2d(512, 64, kernel_size=(1, 1), stride=(1, 1))
+            (value_conv): Conv2d(512, 512, kernel_size=(1, 1), stride=(1, 1))
+            (softmax): Softmax(dim=-1)
+          )
+          (conv52): Sequential(
+            (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+          )
+          (conv7): Sequential(
+            (0): Dropout2d(p=0.1, inplace=False)
+            (1): Conv2d(512, 1024, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+        (sum_conv): Sequential(
+          (0): Dropout2d(p=0.1, inplace=False)
+          (1): Conv2d(1024, 1024, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (avgpool): AdaptiveAvgPool2d(output_size=1)
+        (classifiers): ModuleList(
+          (0): Linear(in_features=1024, out_features=38, bias=True)
+          (1): Linear(in_features=1024, out_features=38, bias=True)
+        )
+      )
+    )
+  )
+)
+Model size: 66.983 M
+==> Start training
+Train ['classifier'] for 10 epochs while keeping other layers frozen
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+D:\jpf\ABD-Net-master\torchreid\losses\hard_mine_triplet_loss.py:58: UserWarning: This overload of addmm_ is deprecated:
+	addmm_(Number beta, Number alpha, Tensor mat1, Tensor mat2)
+Consider using one of the following signatures instead:
+	addmm_(Tensor mat1, Tensor mat2, *, Number beta, Number alpha) (Triggered internally at  ..\torch\csrc\utils\python_arg_parser.cpp:766.)
+  dist.addmm_(1, -2, inputs, inputs.t())
+Epoch: [1][10/68]	Time 0.131 (0.507)	Data 0.0170 (0.0212)	Loss 4.1946 (4.5388)	
+Epoch: [1][20/68]	Time 0.141 (0.321)	Data 0.0180 (0.0189)	Loss 4.8288 (4.5866)	
+Epoch: [1][30/68]	Time 0.130 (0.258)	Data 0.0160 (0.0178)	Loss 4.4481 (4.4866)	
+Epoch: [1][40/68]	Time 0.142 (0.227)	Data 0.0189 (0.0173)	Loss 4.3406 (4.4332)	
+Epoch: [1][50/68]	Time 0.134 (0.209)	Data 0.0180 (0.0169)	Loss 3.8279 (4.3903)	
+Epoch: [1][60/68]	Time 0.127 (0.196)	Data 0.0120 (0.0166)	Loss 3.4079 (4.2339)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [2][10/68]	Time 0.125 (0.129)	Data 0.0130 (0.0142)	Loss 4.1359 (4.8434)	
+Epoch: [2][20/68]	Time 0.159 (0.131)	Data 0.0279 (0.0153)	Loss 4.5406 (4.5940)	
+Epoch: [2][30/68]	Time 0.135 (0.132)	Data 0.0170 (0.0154)	Loss 4.0005 (4.4471)	
+Epoch: [2][40/68]	Time 0.139 (0.132)	Data 0.0130 (0.0151)	Loss 4.2356 (4.2094)	
+Epoch: [2][50/68]	Time 0.144 (0.134)	Data 0.0180 (0.0155)	Loss 2.5909 (4.0186)	
+Epoch: [2][60/68]	Time 0.125 (0.135)	Data 0.0150 (0.0156)	Loss 3.6441 (3.8987)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [3][10/68]	Time 0.123 (0.138)	Data 0.0140 (0.0170)	Loss 4.2823 (4.2925)	
+Epoch: [3][20/68]	Time 0.128 (0.135)	Data 0.0130 (0.0165)	Loss 4.3730 (4.0620)	
+Epoch: [3][30/68]	Time 0.130 (0.135)	Data 0.0140 (0.0164)	Loss 4.2502 (4.0590)	
+Epoch: [3][40/68]	Time 0.154 (0.134)	Data 0.0299 (0.0160)	Loss 3.7655 (3.9594)	
+Epoch: [3][50/68]	Time 0.135 (0.135)	Data 0.0130 (0.0160)	Loss 3.1430 (3.7712)	
+Epoch: [3][60/68]	Time 0.137 (0.135)	Data 0.0170 (0.0159)	Loss 2.9139 (3.6164)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [4][10/68]	Time 0.122 (0.133)	Data 0.0130 (0.0170)	Loss 4.1843 (4.0881)	
+Epoch: [4][20/68]	Time 0.132 (0.132)	Data 0.0180 (0.0163)	Loss 3.9408 (3.8316)	
+Epoch: [4][30/68]	Time 0.130 (0.133)	Data 0.0160 (0.0164)	Loss 3.9722 (3.7779)	
+Epoch: [4][40/68]	Time 0.148 (0.133)	Data 0.0170 (0.0159)	Loss 3.1093 (3.6007)	
+Epoch: [4][50/68]	Time 0.152 (0.134)	Data 0.0150 (0.0162)	Loss 2.2002 (3.5299)	
+Epoch: [4][60/68]	Time 0.131 (0.133)	Data 0.0170 (0.0163)	Loss 2.7043 (3.4859)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [5][10/68]	Time 0.129 (0.130)	Data 0.0170 (0.0151)	Loss 3.9159 (4.3175)	
+Epoch: [5][20/68]	Time 0.130 (0.132)	Data 0.0150 (0.0158)	Loss 4.3935 (4.0116)	
+Epoch: [5][30/68]	Time 0.131 (0.132)	Data 0.0130 (0.0158)	Loss 4.6133 (3.8091)	
+Epoch: [5][40/68]	Time 0.130 (0.132)	Data 0.0150 (0.0161)	Loss 3.5982 (3.7278)	
+Epoch: [5][50/68]	Time 0.128 (0.132)	Data 0.0120 (0.0159)	Loss 2.6004 (3.5704)	
+Epoch: [5][60/68]	Time 0.137 (0.132)	Data 0.0170 (0.0160)	Loss 3.0319 (3.4415)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [6][10/68]	Time 0.135 (0.136)	Data 0.0120 (0.0169)	Loss 4.0026 (4.3077)	
+Epoch: [6][20/68]	Time 0.127 (0.135)	Data 0.0130 (0.0157)	Loss 3.5574 (3.9651)	
+Epoch: [6][30/68]	Time 0.129 (0.135)	Data 0.0130 (0.0158)	Loss 1.7998 (3.7443)	
+Epoch: [6][40/68]	Time 0.127 (0.134)	Data 0.0140 (0.0155)	Loss 3.7027 (3.6733)	
+Epoch: [6][50/68]	Time 0.149 (0.133)	Data 0.0170 (0.0156)	Loss 3.0738 (3.5156)	
+Epoch: [6][60/68]	Time 0.134 (0.134)	Data 0.0160 (0.0157)	Loss 2.4725 (3.3977)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [7][10/68]	Time 0.123 (0.130)	Data 0.0120 (0.0160)	Loss 3.3808 (3.6031)	
+Epoch: [7][20/68]	Time 0.134 (0.130)	Data 0.0180 (0.0157)	Loss 3.6068 (3.5166)	
+Epoch: [7][30/68]	Time 0.139 (0.132)	Data 0.0170 (0.0161)	Loss 3.9696 (3.5704)	
+Epoch: [7][40/68]	Time 0.152 (0.132)	Data 0.0189 (0.0161)	Loss 3.3646 (3.4556)	
+Epoch: [7][50/68]	Time 0.128 (0.132)	Data 0.0140 (0.0157)	Loss 2.7570 (3.4064)	
+Epoch: [7][60/68]	Time 0.138 (0.133)	Data 0.0199 (0.0158)	Loss 1.9402 (3.2287)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [8][10/68]	Time 0.128 (0.131)	Data 0.0140 (0.0150)	Loss 2.8734 (4.1142)	
+Epoch: [8][20/68]	Time 0.138 (0.129)	Data 0.0180 (0.0151)	Loss 3.2682 (3.7760)	
+Epoch: [8][30/68]	Time 0.134 (0.130)	Data 0.0189 (0.0152)	Loss 2.4759 (3.5135)	
+Epoch: [8][40/68]	Time 0.116 (0.132)	Data 0.0120 (0.0153)	Loss 2.5527 (3.3628)	
+Epoch: [8][50/68]	Time 0.132 (0.132)	Data 0.0150 (0.0151)	Loss 2.3740 (3.2484)	
+Epoch: [8][60/68]	Time 0.145 (0.133)	Data 0.0120 (0.0153)	Loss 2.2355 (3.1340)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [9][10/68]	Time 0.127 (0.129)	Data 0.0120 (0.0142)	Loss 3.1071 (3.7679)	
+Epoch: [9][20/68]	Time 0.130 (0.130)	Data 0.0160 (0.0153)	Loss 3.8040 (3.7355)	
+Epoch: [9][30/68]	Time 0.133 (0.130)	Data 0.0120 (0.0154)	Loss 2.7961 (3.5002)	
+Epoch: [9][40/68]	Time 0.130 (0.131)	Data 0.0180 (0.0159)	Loss 2.6679 (3.4489)	
+Epoch: [9][50/68]	Time 0.128 (0.130)	Data 0.0130 (0.0157)	Loss 2.9692 (3.2946)	
+Epoch: [9][60/68]	Time 0.127 (0.130)	Data 0.0130 (0.0155)	Loss 2.4233 (3.1168)	
+open _cam_module
+open fc
+open classifier
+open reduction
+open before_module
+open cam_module
+open pam_module
+open sum_conv
+open classifiers
+Epoch: [10][10/68]	Time 0.125 (0.130)	Data 0.0150 (0.0157)	Loss 2.6923 (3.5734)	
+Epoch: [10][20/68]	Time 0.121 (0.133)	Data 0.0130 (0.0158)	Loss 3.6795 (3.3506)	
+Epoch: [10][30/68]	Time 0.117 (0.132)	Data 0.0130 (0.0155)	Loss 2.9157 (3.2586)	
+Epoch: [10][40/68]	Time 0.130 (0.132)	Data 0.0130 (0.0157)	Loss 2.7565 (3.1859)	
+Epoch: [10][50/68]	Time 0.142 (0.133)	Data 0.0130 (0.0158)	Loss 2.1536 (3.0860)	
+Epoch: [10][60/68]	Time 0.140 (0.133)	Data 0.0150 (0.0158)	Loss 2.9805 (2.9651)	
+Done. All layers are open to train for 80 epochs
+0
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [1][10/68]	Time 0.165 (0.222)	Data 0.0209 (0.0177)	Loss 4.8751 (5.1501)	
+Epoch: [1][20/68]	Time 0.159 (0.193)	Data 0.0140 (0.0172)	Loss 5.2067 (5.2542)	
+Epoch: [1][30/68]	Time 0.173 (0.184)	Data 0.0180 (0.0170)	Loss 4.9749 (5.1325)	
+Epoch: [1][40/68]	Time 0.162 (0.180)	Data 0.0209 (0.0176)	Loss 4.5366 (5.0494)	
+Epoch: [1][50/68]	Time 0.170 (0.178)	Data 0.0199 (0.0177)	Loss 4.8480 (4.9122)	
+Epoch: [1][60/68]	Time 0.167 (0.177)	Data 0.0140 (0.0175)	Loss 5.1064 (4.7403)	
+1
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [2][10/68]	Time 0.169 (0.168)	Data 0.0140 (0.0168)	Loss 5.9539 (5.2991)	
+Epoch: [2][20/68]	Time 0.172 (0.168)	Data 0.0140 (0.0172)	Loss 4.9482 (5.1460)	
+Epoch: [2][30/68]	Time 0.182 (0.170)	Data 0.0180 (0.0169)	Loss 5.0243 (5.0127)	
+Epoch: [2][40/68]	Time 0.171 (0.169)	Data 0.0249 (0.0170)	Loss 3.8726 (4.8826)	
+Epoch: [2][50/68]	Time 0.170 (0.169)	Data 0.0180 (0.0173)	Loss 3.8064 (4.7697)	
+Epoch: [2][60/68]	Time 0.162 (0.168)	Data 0.0130 (0.0171)	Loss 4.2500 (4.6088)	
+2
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [3][10/68]	Time 0.177 (0.167)	Data 0.0150 (0.0165)	Loss 4.8654 (4.8846)	
+Epoch: [3][20/68]	Time 0.157 (0.168)	Data 0.0130 (0.0169)	Loss 5.2918 (4.7021)	
+Epoch: [3][30/68]	Time 0.170 (0.170)	Data 0.0180 (0.0176)	Loss 4.8916 (4.6951)	
+Epoch: [3][40/68]	Time 0.164 (0.169)	Data 0.0160 (0.0178)	Loss 3.6863 (4.5686)	
+Epoch: [3][50/68]	Time 0.164 (0.171)	Data 0.0140 (0.0178)	Loss 3.8253 (4.4174)	
+Epoch: [3][60/68]	Time 0.186 (0.170)	Data 0.0239 (0.0177)	Loss 2.3916 (4.2543)	
+3
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [4][10/68]	Time 0.179 (0.170)	Data 0.0190 (0.0185)	Loss 4.0280 (4.7425)	
+Epoch: [4][20/68]	Time 0.178 (0.167)	Data 0.0140 (0.0172)	Loss 3.9338 (4.5409)	
+Epoch: [4][30/68]	Time 0.175 (0.166)	Data 0.0140 (0.0172)	Loss 4.2551 (4.4684)	
+Epoch: [4][40/68]	Time 0.179 (0.167)	Data 0.0180 (0.0172)	Loss 3.1492 (4.3042)	
+Epoch: [4][50/68]	Time 0.167 (0.167)	Data 0.0160 (0.0174)	Loss 3.1311 (4.1759)	
+Epoch: [4][60/68]	Time 0.174 (0.168)	Data 0.0140 (0.0178)	Loss 2.9588 (4.0763)	
+4
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [5][10/68]	Time 0.164 (0.162)	Data 0.0170 (0.0159)	Loss 4.3771 (4.9930)	
+Epoch: [5][20/68]	Time 0.152 (0.163)	Data 0.0160 (0.0167)	Loss 4.2111 (4.5210)	
+Epoch: [5][30/68]	Time 0.171 (0.164)	Data 0.0170 (0.0169)	Loss 3.6897 (4.3395)	
+Epoch: [5][40/68]	Time 0.170 (0.166)	Data 0.0199 (0.0172)	Loss 3.3856 (4.2897)	
+Epoch: [5][50/68]	Time 0.163 (0.167)	Data 0.0160 (0.0177)	Loss 3.9934 (4.1948)	
+Epoch: [5][60/68]	Time 0.174 (0.168)	Data 0.0150 (0.0175)	Loss 2.7410 (4.0457)	
+5
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [6][10/68]	Time 0.161 (0.168)	Data 0.0189 (0.0181)	Loss 4.3140 (4.2453)	
+Epoch: [6][20/68]	Time 0.151 (0.166)	Data 0.0160 (0.0171)	Loss 4.7426 (4.1771)	
+Epoch: [6][30/68]	Time 0.160 (0.165)	Data 0.0229 (0.0174)	Loss 4.1834 (4.0588)	
+Epoch: [6][40/68]	Time 0.179 (0.167)	Data 0.0299 (0.0175)	Loss 3.4864 (3.9240)	
+Epoch: [6][50/68]	Time 0.185 (0.167)	Data 0.0180 (0.0174)	Loss 4.0269 (3.8484)	
+Epoch: [6][60/68]	Time 0.184 (0.167)	Data 0.0249 (0.0173)	Loss 3.7277 (3.7583)	
+6
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [7][10/68]	Time 0.162 (0.169)	Data 0.0130 (0.0179)	Loss 3.9017 (4.8500)	
+Epoch: [7][20/68]	Time 0.155 (0.165)	Data 0.0170 (0.0171)	Loss 3.8583 (4.4210)	
+Epoch: [7][30/68]	Time 0.190 (0.166)	Data 0.0180 (0.0179)	Loss 3.4909 (4.2072)	
+Epoch: [7][40/68]	Time 0.161 (0.167)	Data 0.0170 (0.0180)	Loss 3.0025 (4.0789)	
+Epoch: [7][50/68]	Time 0.169 (0.167)	Data 0.0150 (0.0177)	Loss 3.3586 (3.9975)	
+Epoch: [7][60/68]	Time 0.169 (0.168)	Data 0.0189 (0.0179)	Loss 3.2975 (3.7871)	
+7
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [8][10/68]	Time 0.171 (0.169)	Data 0.0180 (0.0180)	Loss 3.4034 (4.4343)	
+Epoch: [8][20/68]	Time 0.167 (0.169)	Data 0.0140 (0.0170)	Loss 3.2493 (4.0687)	
+Epoch: [8][30/68]	Time 0.166 (0.168)	Data 0.0140 (0.0173)	Loss 4.4478 (4.0432)	
+Epoch: [8][40/68]	Time 0.162 (0.167)	Data 0.0140 (0.0174)	Loss 2.9206 (3.9218)	
+Epoch: [8][50/68]	Time 0.159 (0.167)	Data 0.0170 (0.0173)	Loss 3.6853 (3.8539)	
+Epoch: [8][60/68]	Time 0.170 (0.167)	Data 0.0189 (0.0175)	Loss 2.7829 (3.7247)	
+8
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [9][10/68]	Time 0.168 (0.167)	Data 0.0219 (0.0199)	Loss 4.3704 (4.4167)	
+Epoch: [9][20/68]	Time 0.176 (0.165)	Data 0.0150 (0.0180)	Loss 3.7379 (4.1253)	
+Epoch: [9][30/68]	Time 0.164 (0.167)	Data 0.0170 (0.0178)	Loss 3.5727 (3.9802)	
+Epoch: [9][40/68]	Time 0.171 (0.167)	Data 0.0180 (0.0177)	Loss 3.0213 (3.8650)	
+Epoch: [9][50/68]	Time 0.170 (0.168)	Data 0.0150 (0.0175)	Loss 3.5745 (3.6974)	
+Epoch: [9][60/68]	Time 0.170 (0.168)	Data 0.0170 (0.0173)	Loss 2.3804 (3.5273)	
+9
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [10][10/68]	Time 0.167 (0.164)	Data 0.0140 (0.0180)	Loss 4.1261 (4.2494)	
+Epoch: [10][20/68]	Time 0.169 (0.167)	Data 0.0160 (0.0173)	Loss 4.1503 (4.0301)	
+Epoch: [10][30/68]	Time 0.171 (0.168)	Data 0.0160 (0.0176)	Loss 3.6911 (3.9361)	
+Epoch: [10][40/68]	Time 0.162 (0.167)	Data 0.0150 (0.0171)	Loss 2.8149 (3.8222)	
+Epoch: [10][50/68]	Time 0.170 (0.166)	Data 0.0160 (0.0170)	Loss 2.4056 (3.7051)	
+Epoch: [10][60/68]	Time 0.172 (0.167)	Data 0.0170 (0.0169)	Loss 2.2519 (3.5737)	
+10
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [11][10/68]	Time 0.162 (0.162)	Data 0.0150 (0.0167)	Loss 5.1255 (3.7797)	
+Epoch: [11][20/68]	Time 0.171 (0.164)	Data 0.0190 (0.0175)	Loss 3.3517 (3.6258)	
+Epoch: [11][30/68]	Time 0.164 (0.165)	Data 0.0140 (0.0173)	Loss 3.1869 (3.6315)	
+Epoch: [11][40/68]	Time 0.172 (0.166)	Data 0.0150 (0.0171)	Loss 3.2005 (3.5787)	
+Epoch: [11][50/68]	Time 0.175 (0.166)	Data 0.0229 (0.0172)	Loss 3.2098 (3.5058)	
+Epoch: [11][60/68]	Time 0.160 (0.166)	Data 0.0150 (0.0171)	Loss 1.9319 (3.3310)	
+11
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [12][10/68]	Time 0.158 (0.166)	Data 0.0150 (0.0169)	Loss 4.1578 (4.6469)	
+Epoch: [12][20/68]	Time 0.168 (0.167)	Data 0.0160 (0.0166)	Loss 3.8754 (4.1371)	
+Epoch: [12][30/68]	Time 0.197 (0.169)	Data 0.0150 (0.0168)	Loss 3.1877 (3.9293)	
+Epoch: [12][40/68]	Time 0.172 (0.169)	Data 0.0140 (0.0167)	Loss 3.2837 (3.7147)	
+Epoch: [12][50/68]	Time 0.177 (0.168)	Data 0.0150 (0.0167)	Loss 2.7961 (3.5730)	
+Epoch: [12][60/68]	Time 0.163 (0.168)	Data 0.0150 (0.0165)	Loss 1.9749 (3.4382)	
+12
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [13][10/68]	Time 0.175 (0.172)	Data 0.0180 (0.0175)	Loss 4.2687 (3.9147)	
+Epoch: [13][20/68]	Time 0.173 (0.169)	Data 0.0229 (0.0172)	Loss 3.7606 (3.8878)	
+Epoch: [13][30/68]	Time 0.157 (0.169)	Data 0.0160 (0.0173)	Loss 3.1089 (3.7503)	
+Epoch: [13][40/68]	Time 0.157 (0.169)	Data 0.0140 (0.0177)	Loss 3.9104 (3.6266)	
+Epoch: [13][50/68]	Time 0.166 (0.169)	Data 0.0180 (0.0177)	Loss 3.3157 (3.4912)	
+Epoch: [13][60/68]	Time 0.163 (0.169)	Data 0.0130 (0.0176)	Loss 3.2861 (3.3232)	
+13
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [14][10/68]	Time 0.165 (0.177)	Data 0.0140 (0.0192)	Loss 3.8064 (4.1826)	
+Epoch: [14][20/68]	Time 0.162 (0.171)	Data 0.0160 (0.0187)	Loss 3.9696 (3.9587)	
+Epoch: [14][30/68]	Time 0.159 (0.170)	Data 0.0170 (0.0185)	Loss 3.2330 (3.7315)	
+Epoch: [14][40/68]	Time 0.159 (0.169)	Data 0.0150 (0.0179)	Loss 2.5031 (3.6197)	
+Epoch: [14][50/68]	Time 0.172 (0.169)	Data 0.0209 (0.0179)	Loss 2.2576 (3.4836)	
+Epoch: [14][60/68]	Time 0.145 (0.167)	Data 0.0130 (0.0175)	Loss 3.6567 (3.3122)	
+14
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [15][10/68]	Time 0.183 (0.168)	Data 0.0180 (0.0174)	Loss 2.7494 (3.6199)	
+Epoch: [15][20/68]	Time 0.150 (0.166)	Data 0.0150 (0.0169)	Loss 4.6770 (3.6896)	
+Epoch: [15][30/68]	Time 0.174 (0.167)	Data 0.0209 (0.0171)	Loss 3.2144 (3.5793)	
+Epoch: [15][40/68]	Time 0.196 (0.167)	Data 0.0249 (0.0170)	Loss 3.6514 (3.5560)	
+Epoch: [15][50/68]	Time 0.181 (0.167)	Data 0.0160 (0.0171)	Loss 3.2366 (3.4633)	
+Epoch: [15][60/68]	Time 0.162 (0.168)	Data 0.0140 (0.0173)	Loss 2.0468 (3.2983)	
+15
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [16][10/68]	Time 0.162 (0.164)	Data 0.0199 (0.0179)	Loss 4.3455 (4.1079)	
+Epoch: [16][20/68]	Time 0.188 (0.168)	Data 0.0170 (0.0179)	Loss 3.9413 (3.8601)	
+Epoch: [16][30/68]	Time 0.155 (0.166)	Data 0.0160 (0.0173)	Loss 3.6188 (3.7350)	
+Epoch: [16][40/68]	Time 0.158 (0.167)	Data 0.0150 (0.0173)	Loss 3.0986 (3.5624)	
+Epoch: [16][50/68]	Time 0.173 (0.167)	Data 0.0239 (0.0171)	Loss 2.5179 (3.4664)	
+Epoch: [16][60/68]	Time 0.170 (0.167)	Data 0.0180 (0.0171)	Loss 1.8620 (3.2693)	
+16
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [17][10/68]	Time 0.164 (0.163)	Data 0.0140 (0.0155)	Loss 3.5211 (4.2700)	
+Epoch: [17][20/68]	Time 0.151 (0.163)	Data 0.0130 (0.0157)	Loss 3.6043 (3.8572)	
+Epoch: [17][30/68]	Time 0.155 (0.164)	Data 0.0150 (0.0168)	Loss 3.2816 (3.6975)	
+Epoch: [17][40/68]	Time 0.160 (0.163)	Data 0.0140 (0.0169)	Loss 3.2454 (3.5035)	
+Epoch: [17][50/68]	Time 0.157 (0.164)	Data 0.0140 (0.0172)	Loss 2.8833 (3.3627)	
+Epoch: [17][60/68]	Time 0.174 (0.164)	Data 0.0239 (0.0174)	Loss 2.7706 (3.2166)	
+17
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [18][10/68]	Time 0.153 (0.162)	Data 0.0150 (0.0180)	Loss 2.8797 (3.7069)	
+Epoch: [18][20/68]	Time 0.159 (0.162)	Data 0.0140 (0.0176)	Loss 2.4571 (3.5047)	
+Epoch: [18][30/68]	Time 0.162 (0.164)	Data 0.0180 (0.0178)	Loss 2.7659 (3.3240)	
+Epoch: [18][40/68]	Time 0.187 (0.165)	Data 0.0259 (0.0182)	Loss 2.7879 (3.2849)	
+Epoch: [18][50/68]	Time 0.166 (0.165)	Data 0.0180 (0.0179)	Loss 2.1040 (3.1386)	
+Epoch: [18][60/68]	Time 0.154 (0.164)	Data 0.0229 (0.0178)	Loss 2.0290 (3.0177)	
+18
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [19][10/68]	Time 0.156 (0.163)	Data 0.0140 (0.0172)	Loss 3.6125 (3.9038)	
+Epoch: [19][20/68]	Time 0.168 (0.163)	Data 0.0150 (0.0174)	Loss 4.0136 (3.5629)	
+Epoch: [19][30/68]	Time 0.155 (0.162)	Data 0.0170 (0.0171)	Loss 3.6960 (3.4255)	
+Epoch: [19][40/68]	Time 0.152 (0.163)	Data 0.0130 (0.0174)	Loss 2.5892 (3.3386)	
+Epoch: [19][50/68]	Time 0.152 (0.162)	Data 0.0160 (0.0172)	Loss 3.4682 (3.1794)	
+Epoch: [19][60/68]	Time 0.160 (0.162)	Data 0.0150 (0.0169)	Loss 1.9474 (3.0145)	
+19
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [20][10/68]	Time 0.159 (0.158)	Data 0.0219 (0.0178)	Loss 3.4502 (3.6567)	
+Epoch: [20][20/68]	Time 0.151 (0.161)	Data 0.0130 (0.0182)	Loss 2.5624 (3.4027)	
+Epoch: [20][30/68]	Time 0.189 (0.162)	Data 0.0269 (0.0184)	Loss 2.5801 (3.3287)	
+Epoch: [20][40/68]	Time 0.154 (0.163)	Data 0.0130 (0.0185)	Loss 2.5042 (3.3053)	
+Epoch: [20][50/68]	Time 0.165 (0.163)	Data 0.0170 (0.0179)	Loss 1.9347 (3.1666)	
+Epoch: [20][60/68]	Time 0.166 (0.163)	Data 0.0239 (0.0180)	Loss 1.7183 (3.0101)	
+20
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [21][10/68]	Time 0.164 (0.165)	Data 0.0140 (0.0173)	Loss 4.9650 (3.5586)	
+Epoch: [21][20/68]	Time 0.154 (0.165)	Data 0.0199 (0.0176)	Loss 2.5764 (3.3901)	
+Epoch: [21][30/68]	Time 0.153 (0.163)	Data 0.0140 (0.0169)	Loss 2.9214 (3.3921)	
+Epoch: [21][40/68]	Time 0.161 (0.163)	Data 0.0170 (0.0169)	Loss 1.8603 (3.2112)	
+Epoch: [21][50/68]	Time 0.174 (0.162)	Data 0.0170 (0.0166)	Loss 1.6412 (3.0093)	
+Epoch: [21][60/68]	Time 0.163 (0.162)	Data 0.0239 (0.0169)	Loss 1.2962 (2.8445)	
+21
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [22][10/68]	Time 0.162 (0.165)	Data 0.0140 (0.0196)	Loss 3.8927 (3.3022)	
+Epoch: [22][20/68]	Time 0.167 (0.165)	Data 0.0140 (0.0189)	Loss 3.3563 (3.2310)	
+Epoch: [22][30/68]	Time 0.166 (0.168)	Data 0.0170 (0.0191)	Loss 2.7613 (3.1515)	
+Epoch: [22][40/68]	Time 0.153 (0.167)	Data 0.0160 (0.0193)	Loss 2.7189 (2.9473)	
+Epoch: [22][50/68]	Time 0.165 (0.167)	Data 0.0150 (0.0191)	Loss 1.4171 (2.7450)	
+Epoch: [22][60/68]	Time 0.170 (0.167)	Data 0.0180 (0.0188)	Loss 2.7163 (2.5983)	
+22
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Epoch: [23][10/68]	Time 0.153 (0.163)	Data 0.0130 (0.0183)	Loss 2.7365 (3.3261)	
+Epoch: [23][20/68]	Time 0.182 (0.164)	Data 0.0279 (0.0178)	Loss 2.6011 (3.0279)	
+Epoch: [23][30/68]	Time 0.165 (0.166)	Data 0.0176 (0.0175)	Loss 2.9116 (2.9048)	
+Epoch: [23][40/68]	Time 0.169 (0.167)	Data 0.0160 (0.0171)	Loss 2.3183 (2.8444)	
+Epoch: [23][50/68]	Time 0.162 (0.167)	Data 0.0130 (0.0171)	Loss 2.5415 (2.7149)	
+Epoch: [23][60/68]	Time 0.178 (0.168)	Data 0.0150 (0.0173)	Loss 1.0579 (2.6117)	
+23
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [24][10/68]	Time 0.374 (0.367)	Data 0.0209 (0.0230)	Loss 3.7292 (4.1426)	
+Epoch: [24][20/68]	Time 0.378 (0.371)	Data 0.0249 (0.0226)	Loss 3.3228 (3.9352)	
+Epoch: [24][30/68]	Time 0.388 (0.373)	Data 0.0329 (0.0226)	Loss 3.4558 (3.6586)	
+Epoch: [24][40/68]	Time 0.371 (0.371)	Data 0.0140 (0.0213)	Loss 3.7425 (3.5626)	
+Epoch: [24][50/68]	Time 0.455 (0.374)	Data 0.0239 (0.0212)	Loss 2.4847 (3.3996)	
+Epoch: [24][60/68]	Time 0.375 (0.379)	Data 0.0229 (0.0218)	Loss 2.0055 (3.2380)	
+24
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [25][10/68]	Time 0.390 (0.382)	Data 0.0269 (0.0230)	Loss 2.3753 (3.0669)	
+Epoch: [25][20/68]	Time 0.383 (0.380)	Data 0.0249 (0.0222)	Loss 2.7191 (3.1921)	
+Epoch: [25][30/68]	Time 0.399 (0.383)	Data 0.0170 (0.0222)	Loss 3.0828 (3.1983)	
+Epoch: [25][40/68]	Time 0.346 (0.385)	Data 0.0140 (0.0217)	Loss 3.0271 (3.1119)	
+Epoch: [25][50/68]	Time 0.345 (0.386)	Data 0.0150 (0.0220)	Loss 2.8818 (3.0429)	
+Epoch: [25][60/68]	Time 0.373 (0.386)	Data 0.0199 (0.0224)	Loss 2.2077 (2.9330)	
+25
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [26][10/68]	Time 0.407 (0.385)	Data 0.0170 (0.0225)	Loss 3.0389 (3.4611)	
+Epoch: [26][20/68]	Time 0.420 (0.383)	Data 0.0249 (0.0218)	Loss 3.5500 (3.2630)	
+Epoch: [26][30/68]	Time 0.362 (0.382)	Data 0.0269 (0.0225)	Loss 2.6248 (3.2427)	
+Epoch: [26][40/68]	Time 0.470 (0.386)	Data 0.0256 (0.0228)	Loss 3.2085 (3.1544)	
+Epoch: [26][50/68]	Time 0.401 (0.390)	Data 0.0239 (0.0235)	Loss 2.3199 (2.9961)	
+Epoch: [26][60/68]	Time 0.355 (0.387)	Data 0.0319 (0.0235)	Loss 1.9808 (2.8692)	
+26
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [27][10/68]	Time 0.389 (0.390)	Data 0.0198 (0.0205)	Loss 3.4840 (3.1768)	
+Epoch: [27][20/68]	Time 0.387 (0.383)	Data 0.0219 (0.0202)	Loss 2.8737 (3.2465)	
+Epoch: [27][30/68]	Time 0.414 (0.391)	Data 0.0309 (0.0213)	Loss 2.7458 (3.2440)	
+Epoch: [27][40/68]	Time 0.364 (0.389)	Data 0.0150 (0.0222)	Loss 3.1189 (3.1901)	
+Epoch: [27][50/68]	Time 0.422 (0.388)	Data 0.0160 (0.0217)	Loss 2.1992 (3.0290)	
+Epoch: [27][60/68]	Time 0.368 (0.387)	Data 0.0229 (0.0218)	Loss 2.0862 (2.8844)	
+27
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [28][10/68]	Time 0.351 (0.369)	Data 0.0140 (0.0213)	Loss 2.8954 (3.2848)	
+Epoch: [28][20/68]	Time 0.386 (0.379)	Data 0.0180 (0.0209)	Loss 3.1286 (3.2980)	
+Epoch: [28][30/68]	Time 0.424 (0.378)	Data 0.0359 (0.0213)	Loss 3.0985 (3.1690)	
+Epoch: [28][40/68]	Time 0.442 (0.376)	Data 0.0199 (0.0212)	Loss 2.5847 (3.0547)	
+Epoch: [28][50/68]	Time 0.350 (0.378)	Data 0.0189 (0.0221)	Loss 2.4343 (2.9759)	
+Epoch: [28][60/68]	Time 0.374 (0.379)	Data 0.0180 (0.0220)	Loss 1.7738 (2.8635)	
+28
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [29][10/68]	Time 0.354 (0.375)	Data 0.0189 (0.0218)	Loss 3.4303 (3.5700)	
+Epoch: [29][20/68]	Time 0.354 (0.372)	Data 0.0180 (0.0210)	Loss 2.5890 (3.2354)	
+Epoch: [29][30/68]	Time 0.376 (0.376)	Data 0.0219 (0.0214)	Loss 2.2036 (3.0529)	
+Epoch: [29][40/68]	Time 0.359 (0.377)	Data 0.0160 (0.0214)	Loss 2.5668 (2.9442)	
+Epoch: [29][50/68]	Time 0.350 (0.378)	Data 0.0269 (0.0219)	Loss 3.7480 (2.8776)	
+Epoch: [29][60/68]	Time 0.348 (0.379)	Data 0.0170 (0.0220)	Loss 1.7739 (2.8014)	
+29
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [30][10/68]	Time 0.397 (0.385)	Data 0.0359 (0.0242)	Loss 3.1086 (3.4284)	
+Epoch: [30][20/68]	Time 0.401 (0.386)	Data 0.0269 (0.0238)	Loss 3.1906 (3.1934)	
+Epoch: [30][30/68]	Time 0.418 (0.388)	Data 0.0289 (0.0237)	Loss 2.7666 (3.0537)	
+Epoch: [30][40/68]	Time 0.371 (0.383)	Data 0.0180 (0.0235)	Loss 3.1763 (2.9586)	
+Epoch: [30][50/68]	Time 0.369 (0.380)	Data 0.0150 (0.0224)	Loss 2.1811 (2.8864)	
+Epoch: [30][60/68]	Time 0.368 (0.380)	Data 0.0209 (0.0222)	Loss 1.6941 (2.7834)	
+30
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [31][10/68]	Time 0.349 (0.382)	Data 0.0140 (0.0207)	Loss 2.9108 (3.2301)	
+Epoch: [31][20/68]	Time 0.413 (0.386)	Data 0.0219 (0.0210)	Loss 3.6766 (3.1203)	
+Epoch: [31][30/68]	Time 0.384 (0.380)	Data 0.0269 (0.0201)	Loss 2.9403 (3.0209)	
+Epoch: [31][40/68]	Time 0.403 (0.382)	Data 0.0269 (0.0208)	Loss 2.1922 (2.9380)	
+Epoch: [31][50/68]	Time 0.361 (0.381)	Data 0.0189 (0.0210)	Loss 2.0456 (2.8194)	
+Epoch: [31][60/68]	Time 0.347 (0.381)	Data 0.0269 (0.0211)	Loss 2.1919 (2.7119)	
+31
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [32][10/68]	Time 0.349 (0.381)	Data 0.0140 (0.0250)	Loss 3.0609 (3.3569)	
+Epoch: [32][20/68]	Time 0.401 (0.388)	Data 0.0289 (0.0261)	Loss 3.2180 (3.1934)	
+Epoch: [32][30/68]	Time 0.364 (0.385)	Data 0.0259 (0.0254)	Loss 2.1640 (2.9852)	
+Epoch: [32][40/68]	Time 0.452 (0.386)	Data 0.0289 (0.0240)	Loss 3.0865 (2.9397)	
+Epoch: [32][50/68]	Time 0.412 (0.384)	Data 0.0160 (0.0230)	Loss 2.1903 (2.8273)	
+Epoch: [32][60/68]	Time 0.377 (0.384)	Data 0.0279 (0.0229)	Loss 2.2962 (2.6877)	
+32
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [33][10/68]	Time 0.420 (0.378)	Data 0.0180 (0.0233)	Loss 2.2485 (3.2447)	
+Epoch: [33][20/68]	Time 0.413 (0.382)	Data 0.0180 (0.0244)	Loss 2.8925 (3.1147)	
+Epoch: [33][30/68]	Time 0.366 (0.382)	Data 0.0190 (0.0234)	Loss 2.4695 (3.0179)	
+Epoch: [33][40/68]	Time 0.390 (0.379)	Data 0.0150 (0.0227)	Loss 2.0535 (2.9083)	
+Epoch: [33][50/68]	Time 0.445 (0.382)	Data 0.0329 (0.0228)	Loss 2.1567 (2.8470)	
+Epoch: [33][60/68]	Time 0.370 (0.382)	Data 0.0279 (0.0232)	Loss 2.2147 (2.7140)	
+33
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [34][10/68]	Time 0.408 (0.405)	Data 0.0279 (0.0216)	Loss 3.5745 (3.4321)	
+Epoch: [34][20/68]	Time 0.417 (0.391)	Data 0.0199 (0.0221)	Loss 2.5409 (3.0953)	
+Epoch: [34][30/68]	Time 0.351 (0.388)	Data 0.0189 (0.0215)	Loss 2.6764 (2.9883)	
+Epoch: [34][40/68]	Time 0.365 (0.382)	Data 0.0160 (0.0206)	Loss 1.6306 (2.8394)	
+Epoch: [34][50/68]	Time 0.377 (0.382)	Data 0.0150 (0.0209)	Loss 2.3800 (2.7146)	
+Epoch: [34][60/68]	Time 0.396 (0.384)	Data 0.0209 (0.0211)	Loss 1.8504 (2.6655)	
+34
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [35][10/68]	Time 0.344 (0.367)	Data 0.0189 (0.0224)	Loss 3.1751 (3.0425)	
+Epoch: [35][20/68]	Time 0.369 (0.375)	Data 0.0226 (0.0218)	Loss 3.3779 (2.9833)	
+Epoch: [35][30/68]	Time 0.387 (0.377)	Data 0.0199 (0.0213)	Loss 3.6219 (2.9004)	
+Epoch: [35][40/68]	Time 0.386 (0.377)	Data 0.0170 (0.0212)	Loss 3.1449 (2.8765)	
+Epoch: [35][50/68]	Time 0.375 (0.379)	Data 0.0199 (0.0218)	Loss 2.3224 (2.7152)	
+Epoch: [35][60/68]	Time 0.410 (0.380)	Data 0.0150 (0.0217)	Loss 1.8264 (2.6246)	
+35
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [36][10/68]	Time 0.374 (0.381)	Data 0.0289 (0.0223)	Loss 2.5185 (3.0048)	
+Epoch: [36][20/68]	Time 0.397 (0.384)	Data 0.0160 (0.0204)	Loss 3.8097 (3.0471)	
+Epoch: [36][30/68]	Time 0.450 (0.386)	Data 0.0170 (0.0217)	Loss 3.4070 (2.9403)	
+Epoch: [36][40/68]	Time 0.384 (0.385)	Data 0.0269 (0.0216)	Loss 2.8796 (2.8134)	
+Epoch: [36][50/68]	Time 0.324 (0.383)	Data 0.0180 (0.0223)	Loss 1.8673 (2.6767)	
+Epoch: [36][60/68]	Time 0.389 (0.384)	Data 0.0206 (0.0232)	Loss 1.8634 (2.5882)	
+36
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [37][10/68]	Time 0.398 (0.392)	Data 0.0309 (0.0236)	Loss 2.6805 (2.7755)	
+Epoch: [37][20/68]	Time 0.352 (0.388)	Data 0.0219 (0.0238)	Loss 3.2822 (2.9999)	
+Epoch: [37][30/68]	Time 0.368 (0.390)	Data 0.0269 (0.0234)	Loss 3.1080 (2.9082)	
+Epoch: [37][40/68]	Time 0.416 (0.389)	Data 0.0180 (0.0226)	Loss 2.6900 (2.8309)	
+Epoch: [37][50/68]	Time 0.377 (0.387)	Data 0.0190 (0.0224)	Loss 3.0405 (2.7255)	
+Epoch: [37][60/68]	Time 0.393 (0.387)	Data 0.0299 (0.0226)	Loss 1.8678 (2.6104)	
+37
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [38][10/68]	Time 0.358 (0.377)	Data 0.0140 (0.0211)	Loss 4.6446 (3.4794)	
+Epoch: [38][20/68]	Time 0.371 (0.381)	Data 0.0269 (0.0206)	Loss 3.0450 (3.1472)	
+Epoch: [38][30/68]	Time 0.353 (0.380)	Data 0.0170 (0.0208)	Loss 2.5495 (2.9957)	
+Epoch: [38][40/68]	Time 0.398 (0.380)	Data 0.0150 (0.0204)	Loss 2.0628 (2.8658)	
+Epoch: [38][50/68]	Time 0.456 (0.381)	Data 0.0259 (0.0207)	Loss 1.7278 (2.7091)	
+Epoch: [38][60/68]	Time 0.396 (0.381)	Data 0.0229 (0.0209)	Loss 1.9033 (2.5670)	
+38
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [39][10/68]	Time 0.359 (0.384)	Data 0.0140 (0.0204)	Loss 2.6434 (3.0877)	
+Epoch: [39][20/68]	Time 0.372 (0.379)	Data 0.0179 (0.0195)	Loss 3.3909 (2.9025)	
+Epoch: [39][30/68]	Time 0.454 (0.388)	Data 0.0219 (0.0208)	Loss 1.6177 (2.7571)	
+Epoch: [39][40/68]	Time 0.433 (0.386)	Data 0.0249 (0.0209)	Loss 2.2277 (2.7581)	
+Epoch: [39][50/68]	Time 0.393 (0.383)	Data 0.0170 (0.0209)	Loss 1.5934 (2.6328)	
+Epoch: [39][60/68]	Time 0.389 (0.381)	Data 0.0150 (0.0206)	Loss 1.7423 (2.5216)	
+39
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [40][10/68]	Time 0.352 (0.370)	Data 0.0160 (0.0230)	Loss 4.0462 (3.3089)	
+Epoch: [40][20/68]	Time 0.381 (0.377)	Data 0.0199 (0.0224)	Loss 3.3624 (3.1477)	
+Epoch: [40][30/68]	Time 0.426 (0.384)	Data 0.0239 (0.0226)	Loss 2.5768 (2.9507)	
+Epoch: [40][40/68]	Time 0.369 (0.386)	Data 0.0189 (0.0233)	Loss 2.0923 (2.8233)	
+Epoch: [40][50/68]	Time 0.366 (0.384)	Data 0.0239 (0.0232)	Loss 1.5182 (2.6690)	
+Epoch: [40][60/68]	Time 0.352 (0.382)	Data 0.0170 (0.0229)	Loss 1.5276 (2.5440)	
+40
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [41][10/68]	Time 0.449 (0.397)	Data 0.0160 (0.0240)	Loss 3.1310 (3.1025)	
+Epoch: [41][20/68]	Time 0.377 (0.382)	Data 0.0160 (0.0223)	Loss 3.2894 (3.1120)	
+Epoch: [41][30/68]	Time 0.325 (0.377)	Data 0.0130 (0.0220)	Loss 1.9578 (2.9200)	
+Epoch: [41][40/68]	Time 0.361 (0.379)	Data 0.0239 (0.0218)	Loss 2.8792 (2.7828)	
+Epoch: [41][50/68]	Time 0.372 (0.380)	Data 0.0299 (0.0215)	Loss 1.4759 (2.6400)	
+Epoch: [41][60/68]	Time 0.393 (0.381)	Data 0.0170 (0.0212)	Loss 1.6101 (2.5071)	
+41
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [42][10/68]	Time 0.346 (0.371)	Data 0.0150 (0.0240)	Loss 2.8197 (3.0977)	
+Epoch: [42][20/68]	Time 0.408 (0.376)	Data 0.0289 (0.0236)	Loss 2.8085 (2.9369)	
+Epoch: [42][30/68]	Time 0.384 (0.377)	Data 0.0190 (0.0233)	Loss 1.4030 (2.8401)	
+Epoch: [42][40/68]	Time 0.348 (0.378)	Data 0.0150 (0.0225)	Loss 2.1001 (2.6513)	
+Epoch: [42][50/68]	Time 0.357 (0.378)	Data 0.0249 (0.0219)	Loss 2.1657 (2.5523)	
+Epoch: [42][60/68]	Time 0.362 (0.379)	Data 0.0189 (0.0221)	Loss 1.6610 (2.4637)	
+42
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [43][10/68]	Time 0.386 (0.370)	Data 0.0239 (0.0228)	Loss 3.6833 (3.1888)	
+Epoch: [43][20/68]	Time 0.372 (0.372)	Data 0.0150 (0.0209)	Loss 2.6268 (2.9632)	
+Epoch: [43][30/68]	Time 0.379 (0.373)	Data 0.0180 (0.0214)	Loss 2.9169 (2.8758)	
+Epoch: [43][40/68]	Time 0.366 (0.373)	Data 0.0150 (0.0207)	Loss 3.0393 (2.8078)	
+Epoch: [43][50/68]	Time 0.356 (0.374)	Data 0.0150 (0.0210)	Loss 2.4700 (2.6707)	
+Epoch: [43][60/68]	Time 0.372 (0.376)	Data 0.0289 (0.0222)	Loss 1.8950 (2.5192)	
+43
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [44][10/68]	Time 0.381 (0.388)	Data 0.0150 (0.0207)	Loss 2.8415 (2.7127)	
+Epoch: [44][20/68]	Time 0.360 (0.384)	Data 0.0160 (0.0206)	Loss 3.2103 (2.8682)	
+Epoch: [44][30/68]	Time 0.415 (0.385)	Data 0.0150 (0.0200)	Loss 2.9134 (2.8455)	
+Epoch: [44][40/68]	Time 0.370 (0.384)	Data 0.0150 (0.0208)	Loss 2.3061 (2.6775)	
+Epoch: [44][50/68]	Time 0.385 (0.385)	Data 0.0189 (0.0210)	Loss 1.8964 (2.6033)	
+Epoch: [44][60/68]	Time 0.369 (0.383)	Data 0.0209 (0.0211)	Loss 1.4492 (2.4995)	
+44
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [45][10/68]	Time 0.400 (0.371)	Data 0.0180 (0.0239)	Loss 2.4116 (2.6353)	
+Epoch: [45][20/68]	Time 0.395 (0.374)	Data 0.0209 (0.0223)	Loss 2.9953 (2.7451)	
+Epoch: [45][30/68]	Time 0.417 (0.378)	Data 0.0190 (0.0229)	Loss 2.8500 (2.7478)	
+Epoch: [45][40/68]	Time 0.412 (0.376)	Data 0.0219 (0.0221)	Loss 2.8794 (2.6988)	
+Epoch: [45][50/68]	Time 0.350 (0.380)	Data 0.0209 (0.0221)	Loss 2.0208 (2.5642)	
+Epoch: [45][60/68]	Time 0.385 (0.381)	Data 0.0199 (0.0222)	Loss 2.3509 (2.4522)	
+45
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [46][10/68]	Time 0.375 (0.384)	Data 0.0130 (0.0237)	Loss 2.4509 (2.9714)	
+Epoch: [46][20/68]	Time 0.372 (0.379)	Data 0.0229 (0.0217)	Loss 3.7689 (2.9832)	
+Epoch: [46][30/68]	Time 0.337 (0.377)	Data 0.0150 (0.0217)	Loss 1.8067 (2.7910)	
+Epoch: [46][40/68]	Time 0.420 (0.380)	Data 0.0219 (0.0221)	Loss 2.3489 (2.7393)	
+Epoch: [46][50/68]	Time 0.391 (0.383)	Data 0.0229 (0.0218)	Loss 2.1968 (2.5957)	
+Epoch: [46][60/68]	Time 0.441 (0.387)	Data 0.0406 (0.0225)	Loss 1.8730 (2.4769)	
+46
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [47][10/68]	Time 0.396 (0.377)	Data 0.0199 (0.0187)	Loss 3.7266 (2.9338)	
+Epoch: [47][20/68]	Time 0.357 (0.380)	Data 0.0170 (0.0210)	Loss 3.3920 (2.8458)	
+Epoch: [47][30/68]	Time 0.373 (0.382)	Data 0.0239 (0.0226)	Loss 2.6577 (2.7868)	
+Epoch: [47][40/68]	Time 0.359 (0.382)	Data 0.0189 (0.0226)	Loss 2.0750 (2.6972)	
+Epoch: [47][50/68]	Time 0.360 (0.380)	Data 0.0189 (0.0221)	Loss 1.8825 (2.5486)	
+Epoch: [47][60/68]	Time 0.361 (0.379)	Data 0.0199 (0.0217)	Loss 1.7332 (2.4671)	
+47
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [48][10/68]	Time 0.384 (0.367)	Data 0.0150 (0.0224)	Loss 3.8217 (3.2646)	
+Epoch: [48][20/68]	Time 0.385 (0.379)	Data 0.0269 (0.0231)	Loss 2.9607 (3.1124)	
+Epoch: [48][30/68]	Time 0.407 (0.379)	Data 0.0140 (0.0225)	Loss 2.9173 (3.0276)	
+Epoch: [48][40/68]	Time 0.377 (0.381)	Data 0.0170 (0.0218)	Loss 2.2423 (2.8702)	
+Epoch: [48][50/68]	Time 0.410 (0.381)	Data 0.0279 (0.0218)	Loss 1.6754 (2.6736)	
+Epoch: [48][60/68]	Time 0.399 (0.382)	Data 0.0239 (0.0224)	Loss 1.5620 (2.5236)	
+48
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [49][10/68]	Time 0.350 (0.371)	Data 0.0229 (0.0226)	Loss 3.3364 (3.0679)	
+Epoch: [49][20/68]	Time 0.430 (0.375)	Data 0.0239 (0.0208)	Loss 3.0325 (2.7972)	
+Epoch: [49][30/68]	Time 0.390 (0.375)	Data 0.0190 (0.0205)	Loss 1.8970 (2.6991)	
+Epoch: [49][40/68]	Time 0.412 (0.377)	Data 0.0229 (0.0205)	Loss 1.9884 (2.6060)	
+Epoch: [49][50/68]	Time 0.372 (0.379)	Data 0.0219 (0.0204)	Loss 1.9323 (2.5822)	
+Epoch: [49][60/68]	Time 0.384 (0.381)	Data 0.0180 (0.0208)	Loss 1.5351 (2.4551)	
+49
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [50][10/68]	Time 0.351 (0.380)	Data 0.0150 (0.0205)	Loss 2.6808 (3.0642)	
+Epoch: [50][20/68]	Time 0.358 (0.375)	Data 0.0209 (0.0199)	Loss 3.1159 (2.9166)	
+Epoch: [50][30/68]	Time 0.353 (0.377)	Data 0.0209 (0.0217)	Loss 1.8646 (2.7777)	
+Epoch: [50][40/68]	Time 0.414 (0.380)	Data 0.0296 (0.0223)	Loss 2.0404 (2.6878)	
+Epoch: [50][50/68]	Time 0.405 (0.382)	Data 0.0349 (0.0237)	Loss 2.1583 (2.5869)	
+Epoch: [50][60/68]	Time 0.340 (0.382)	Data 0.0160 (0.0229)	Loss 1.6167 (2.4576)	
+50
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [51][10/68]	Time 0.342 (0.377)	Data 0.0150 (0.0200)	Loss 1.9780 (2.5761)	
+Epoch: [51][20/68]	Time 0.442 (0.378)	Data 0.0279 (0.0211)	Loss 2.7498 (2.6442)	
+Epoch: [51][30/68]	Time 0.360 (0.377)	Data 0.0209 (0.0213)	Loss 2.6521 (2.6894)	
+Epoch: [51][40/68]	Time 0.382 (0.377)	Data 0.0239 (0.0219)	Loss 2.6735 (2.6893)	
+Epoch: [51][50/68]	Time 0.403 (0.381)	Data 0.0289 (0.0216)	Loss 2.6689 (2.5653)	
+Epoch: [51][60/68]	Time 0.385 (0.382)	Data 0.0170 (0.0216)	Loss 2.4098 (2.4420)	
+51
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [52][10/68]	Time 0.387 (0.378)	Data 0.0259 (0.0219)	Loss 3.1953 (2.9961)	
+Epoch: [52][20/68]	Time 0.379 (0.377)	Data 0.0309 (0.0230)	Loss 2.7422 (2.9238)	
+Epoch: [52][30/68]	Time 0.395 (0.376)	Data 0.0150 (0.0216)	Loss 2.4261 (2.8097)	
+Epoch: [52][40/68]	Time 0.389 (0.377)	Data 0.0140 (0.0219)	Loss 2.5934 (2.6950)	
+Epoch: [52][50/68]	Time 0.366 (0.376)	Data 0.0279 (0.0217)	Loss 1.4265 (2.5598)	
+Epoch: [52][60/68]	Time 0.366 (0.376)	Data 0.0199 (0.0214)	Loss 2.0006 (2.4387)	
+52
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [53][10/68]	Time 0.403 (0.383)	Data 0.0150 (0.0191)	Loss 2.0786 (2.6687)	
+Epoch: [53][20/68]	Time 0.385 (0.378)	Data 0.0229 (0.0197)	Loss 1.9715 (2.8149)	
+Epoch: [53][30/68]	Time 0.356 (0.381)	Data 0.0189 (0.0206)	Loss 1.9476 (2.7556)	
+Epoch: [53][40/68]	Time 0.405 (0.377)	Data 0.0229 (0.0204)	Loss 2.1712 (2.6716)	
+Epoch: [53][50/68]	Time 0.381 (0.382)	Data 0.0279 (0.0212)	Loss 1.4825 (2.5971)	
+Epoch: [53][60/68]	Time 0.338 (0.382)	Data 0.0150 (0.0211)	Loss 1.6005 (2.4393)	
+53
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [54][10/68]	Time 0.411 (0.398)	Data 0.0239 (0.0276)	Loss 3.0480 (3.0469)	
+Epoch: [54][20/68]	Time 0.365 (0.384)	Data 0.0140 (0.0249)	Loss 1.8956 (2.8578)	
+Epoch: [54][30/68]	Time 0.370 (0.385)	Data 0.0180 (0.0237)	Loss 2.2233 (2.6815)	
+Epoch: [54][40/68]	Time 0.333 (0.385)	Data 0.0150 (0.0223)	Loss 2.6860 (2.6677)	
+Epoch: [54][50/68]	Time 0.370 (0.382)	Data 0.0160 (0.0221)	Loss 1.5842 (2.5850)	
+Epoch: [54][60/68]	Time 0.398 (0.384)	Data 0.0269 (0.0222)	Loss 1.3901 (2.4464)	
+54
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [55][10/68]	Time 0.365 (0.377)	Data 0.0150 (0.0232)	Loss 3.7695 (3.1497)	
+Epoch: [55][20/68]	Time 0.367 (0.385)	Data 0.0160 (0.0214)	Loss 3.1569 (2.9433)	
+Epoch: [55][30/68]	Time 0.390 (0.392)	Data 0.0239 (0.0218)	Loss 1.8277 (2.7320)	
+Epoch: [55][40/68]	Time 0.356 (0.388)	Data 0.0209 (0.0220)	Loss 1.7850 (2.6723)	
+Epoch: [55][50/68]	Time 0.387 (0.386)	Data 0.0219 (0.0218)	Loss 2.3802 (2.5654)	
+Epoch: [55][60/68]	Time 0.406 (0.385)	Data 0.0219 (0.0215)	Loss 2.1207 (2.4234)	
+55
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [56][10/68]	Time 0.372 (0.397)	Data 0.0190 (0.0232)	Loss 3.5531 (2.8218)	
+Epoch: [56][20/68]	Time 0.387 (0.389)	Data 0.0329 (0.0227)	Loss 2.8229 (2.8320)	
+Epoch: [56][30/68]	Time 0.385 (0.384)	Data 0.0180 (0.0219)	Loss 3.5890 (2.8002)	
+Epoch: [56][40/68]	Time 0.368 (0.384)	Data 0.0219 (0.0220)	Loss 2.0503 (2.6169)	
+Epoch: [56][50/68]	Time 0.353 (0.389)	Data 0.0189 (0.0223)	Loss 1.6119 (2.5505)	
+Epoch: [56][60/68]	Time 0.447 (0.388)	Data 0.0160 (0.0219)	Loss 1.5331 (2.4179)	
+56
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [57][10/68]	Time 0.363 (0.382)	Data 0.0189 (0.0203)	Loss 2.8824 (2.9833)	
+Epoch: [57][20/68]	Time 0.363 (0.389)	Data 0.0190 (0.0210)	Loss 3.3467 (3.0108)	
+Epoch: [57][30/68]	Time 0.367 (0.384)	Data 0.0239 (0.0214)	Loss 2.4093 (2.7920)	
+Epoch: [57][40/68]	Time 0.349 (0.385)	Data 0.0150 (0.0219)	Loss 2.1255 (2.6810)	
+Epoch: [57][50/68]	Time 0.391 (0.386)	Data 0.0140 (0.0215)	Loss 1.5533 (2.5546)	
+Epoch: [57][60/68]	Time 0.401 (0.384)	Data 0.0150 (0.0217)	Loss 1.6760 (2.4422)	
+57
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [58][10/68]	Time 0.380 (0.384)	Data 0.0180 (0.0214)	Loss 2.9902 (2.9906)	
+Epoch: [58][20/68]	Time 0.384 (0.384)	Data 0.0229 (0.0229)	Loss 1.6841 (2.9770)	
+Epoch: [58][30/68]	Time 0.405 (0.382)	Data 0.0279 (0.0229)	Loss 2.5988 (2.8504)	
+Epoch: [58][40/68]	Time 0.362 (0.380)	Data 0.0269 (0.0223)	Loss 2.3830 (2.6495)	
+Epoch: [58][50/68]	Time 0.383 (0.381)	Data 0.0199 (0.0227)	Loss 1.6662 (2.5244)	
+Epoch: [58][60/68]	Time 0.388 (0.383)	Data 0.0289 (0.0232)	Loss 1.6610 (2.4021)	
+58
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [59][10/68]	Time 0.377 (0.390)	Data 0.0219 (0.0221)	Loss 3.4256 (2.9077)	
+Epoch: [59][20/68]	Time 0.369 (0.380)	Data 0.0140 (0.0217)	Loss 3.0453 (2.9461)	
+Epoch: [59][30/68]	Time 0.373 (0.379)	Data 0.0209 (0.0210)	Loss 2.5920 (2.7891)	
+Epoch: [59][40/68]	Time 0.374 (0.379)	Data 0.0219 (0.0210)	Loss 1.4450 (2.6832)	
+Epoch: [59][50/68]	Time 0.384 (0.381)	Data 0.0140 (0.0212)	Loss 1.7876 (2.5590)	
+Epoch: [59][60/68]	Time 0.349 (0.381)	Data 0.0249 (0.0220)	Loss 1.5027 (2.4259)	
+59
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [60][10/68]	Time 0.348 (0.386)	Data 0.0150 (0.0218)	Loss 4.0735 (3.1183)	
+Epoch: [60][20/68]	Time 0.377 (0.378)	Data 0.0309 (0.0221)	Loss 2.0916 (3.0967)	
+Epoch: [60][30/68]	Time 0.401 (0.379)	Data 0.0190 (0.0209)	Loss 2.5661 (2.8435)	
+Epoch: [60][40/68]	Time 0.367 (0.381)	Data 0.0219 (0.0214)	Loss 2.0363 (2.6877)	
+Epoch: [60][50/68]	Time 0.372 (0.381)	Data 0.0180 (0.0216)	Loss 1.7666 (2.5570)	
+Epoch: [60][60/68]	Time 0.363 (0.380)	Data 0.0150 (0.0212)	Loss 1.6150 (2.4242)	
+60
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [61][10/68]	Time 0.357 (0.385)	Data 0.0140 (0.0249)	Loss 3.5380 (3.0740)	
+Epoch: [61][20/68]	Time 0.494 (0.392)	Data 0.0279 (0.0243)	Loss 4.0909 (2.8877)	
+Epoch: [61][30/68]	Time 0.364 (0.388)	Data 0.0180 (0.0236)	Loss 2.0288 (2.7319)	
+Epoch: [61][40/68]	Time 0.422 (0.390)	Data 0.0200 (0.0229)	Loss 2.0681 (2.6768)	
+Epoch: [61][50/68]	Time 0.372 (0.385)	Data 0.0269 (0.0224)	Loss 2.1541 (2.5567)	
+Epoch: [61][60/68]	Time 0.378 (0.383)	Data 0.0259 (0.0220)	Loss 1.3616 (2.4220)	
+61
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [62][10/68]	Time 0.370 (0.387)	Data 0.0279 (0.0214)	Loss 3.5535 (2.7377)	
+Epoch: [62][20/68]	Time 0.392 (0.382)	Data 0.0229 (0.0215)	Loss 3.2741 (2.8587)	
+Epoch: [62][30/68]	Time 0.400 (0.381)	Data 0.0219 (0.0213)	Loss 3.1713 (2.8305)	
+Epoch: [62][40/68]	Time 0.353 (0.380)	Data 0.0220 (0.0212)	Loss 2.5769 (2.7094)	
+Epoch: [62][50/68]	Time 0.379 (0.381)	Data 0.0180 (0.0213)	Loss 1.7426 (2.5673)	
+Epoch: [62][60/68]	Time 0.396 (0.380)	Data 0.0249 (0.0210)	Loss 2.0780 (2.4430)	
+62
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [63][10/68]	Time 0.402 (0.375)	Data 0.0249 (0.0225)	Loss 3.1401 (2.9537)	
+Epoch: [63][20/68]	Time 0.356 (0.379)	Data 0.0180 (0.0215)	Loss 2.8561 (2.9028)	
+Epoch: [63][30/68]	Time 0.358 (0.377)	Data 0.0160 (0.0214)	Loss 3.0014 (2.8769)	
+Epoch: [63][40/68]	Time 0.370 (0.376)	Data 0.0150 (0.0208)	Loss 2.3998 (2.6838)	
+Epoch: [63][50/68]	Time 0.400 (0.379)	Data 0.0229 (0.0207)	Loss 1.4042 (2.5751)	
+Epoch: [63][60/68]	Time 0.403 (0.381)	Data 0.0219 (0.0210)	Loss 1.8509 (2.4484)	
+63
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [64][10/68]	Time 0.394 (0.383)	Data 0.0259 (0.0204)	Loss 1.8484 (2.8675)	
+Epoch: [64][20/68]	Time 0.346 (0.383)	Data 0.0150 (0.0192)	Loss 2.4171 (2.7900)	
+Epoch: [64][30/68]	Time 0.397 (0.385)	Data 0.0189 (0.0201)	Loss 2.1435 (2.6696)	
+Epoch: [64][40/68]	Time 0.379 (0.385)	Data 0.0180 (0.0201)	Loss 1.9010 (2.5948)	
+Epoch: [64][50/68]	Time 0.407 (0.387)	Data 0.0329 (0.0204)	Loss 2.0277 (2.4873)	
+Epoch: [64][60/68]	Time 0.365 (0.385)	Data 0.0180 (0.0204)	Loss 1.3774 (2.3817)	
+64
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [65][10/68]	Time 0.371 (0.385)	Data 0.0269 (0.0220)	Loss 2.1758 (3.0487)	
+Epoch: [65][20/68]	Time 0.409 (0.383)	Data 0.0160 (0.0219)	Loss 3.0415 (2.9046)	
+Epoch: [65][30/68]	Time 0.386 (0.385)	Data 0.0150 (0.0220)	Loss 2.1867 (2.7568)	
+Epoch: [65][40/68]	Time 0.408 (0.383)	Data 0.0170 (0.0207)	Loss 1.9681 (2.6436)	
+Epoch: [65][50/68]	Time 0.366 (0.382)	Data 0.0180 (0.0210)	Loss 1.9559 (2.5510)	
+Epoch: [65][60/68]	Time 0.358 (0.383)	Data 0.0219 (0.0216)	Loss 1.4237 (2.4317)	
+65
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [66][10/68]	Time 0.353 (0.385)	Data 0.0160 (0.0209)	Loss 2.3432 (2.5752)	
+Epoch: [66][20/68]	Time 0.348 (0.386)	Data 0.0180 (0.0201)	Loss 3.5569 (2.8297)	
+Epoch: [66][30/68]	Time 0.413 (0.383)	Data 0.0150 (0.0196)	Loss 2.1092 (2.6290)	
+Epoch: [66][40/68]	Time 0.395 (0.386)	Data 0.0150 (0.0197)	Loss 2.5897 (2.5888)	
+Epoch: [66][50/68]	Time 0.360 (0.384)	Data 0.0209 (0.0204)	Loss 1.5698 (2.4641)	
+Epoch: [66][60/68]	Time 0.389 (0.386)	Data 0.0289 (0.0212)	Loss 1.6947 (2.3632)	
+66
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [67][10/68]	Time 0.357 (0.373)	Data 0.0219 (0.0238)	Loss 2.3173 (2.9506)	
+Epoch: [67][20/68]	Time 0.376 (0.378)	Data 0.0170 (0.0220)	Loss 3.1315 (2.7885)	
+Epoch: [67][30/68]	Time 0.344 (0.374)	Data 0.0160 (0.0217)	Loss 3.1194 (2.6422)	
+Epoch: [67][40/68]	Time 0.428 (0.379)	Data 0.0279 (0.0219)	Loss 3.6091 (2.5517)	
+Epoch: [67][50/68]	Time 0.421 (0.378)	Data 0.0289 (0.0219)	Loss 2.3900 (2.4521)	
+Epoch: [67][60/68]	Time 0.332 (0.375)	Data 0.0239 (0.0216)	Loss 2.1405 (2.3585)	
+67
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [68][10/68]	Time 0.418 (0.375)	Data 0.0160 (0.0204)	Loss 2.2955 (3.2164)	
+Epoch: [68][20/68]	Time 0.390 (0.373)	Data 0.0140 (0.0199)	Loss 2.6466 (2.9510)	
+Epoch: [68][30/68]	Time 0.378 (0.381)	Data 0.0150 (0.0209)	Loss 2.5888 (2.7430)	
+Epoch: [68][40/68]	Time 0.349 (0.382)	Data 0.0239 (0.0208)	Loss 2.3872 (2.6541)	
+Epoch: [68][50/68]	Time 0.363 (0.377)	Data 0.0239 (0.0209)	Loss 2.4984 (2.5478)	
+Epoch: [68][60/68]	Time 0.410 (0.378)	Data 0.0150 (0.0209)	Loss 1.5387 (2.4092)	
+68
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [69][10/68]	Time 0.366 (0.382)	Data 0.0160 (0.0233)	Loss 3.4483 (2.9589)	
+Epoch: [69][20/68]	Time 0.395 (0.388)	Data 0.0170 (0.0233)	Loss 2.6643 (2.8288)	
+Epoch: [69][30/68]	Time 0.401 (0.386)	Data 0.0219 (0.0216)	Loss 3.4566 (2.8256)	
+Epoch: [69][40/68]	Time 0.381 (0.386)	Data 0.0259 (0.0216)	Loss 2.2966 (2.6962)	
+Epoch: [69][50/68]	Time 0.337 (0.382)	Data 0.0140 (0.0212)	Loss 1.4608 (2.4962)	
+Epoch: [69][60/68]	Time 0.398 (0.383)	Data 0.0259 (0.0208)	Loss 1.9714 (2.4194)	
+69
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [70][10/68]	Time 0.383 (0.386)	Data 0.0259 (0.0199)	Loss 3.3590 (2.9892)	
+Epoch: [70][20/68]	Time 0.360 (0.378)	Data 0.0150 (0.0197)	Loss 2.7164 (2.8996)	
+Epoch: [70][30/68]	Time 0.362 (0.381)	Data 0.0160 (0.0199)	Loss 2.8801 (2.7877)	
+Epoch: [70][40/68]	Time 0.384 (0.380)	Data 0.0239 (0.0206)	Loss 1.3614 (2.6186)	
+Epoch: [70][50/68]	Time 0.426 (0.380)	Data 0.0140 (0.0205)	Loss 2.2201 (2.5074)	
+Epoch: [70][60/68]	Time 0.357 (0.379)	Data 0.0189 (0.0203)	Loss 1.6389 (2.4140)	
+70
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [71][10/68]	Time 0.399 (0.389)	Data 0.0209 (0.0263)	Loss 2.6692 (2.5370)	
+Epoch: [71][20/68]	Time 0.377 (0.387)	Data 0.0329 (0.0239)	Loss 2.1464 (2.6921)	
+Epoch: [71][30/68]	Time 0.443 (0.386)	Data 0.0150 (0.0228)	Loss 3.2271 (2.6973)	
+Epoch: [71][40/68]	Time 0.351 (0.385)	Data 0.0160 (0.0221)	Loss 1.7990 (2.5315)	
+Epoch: [71][50/68]	Time 0.368 (0.387)	Data 0.0180 (0.0216)	Loss 1.9789 (2.4469)	
+Epoch: [71][60/68]	Time 0.363 (0.387)	Data 0.0150 (0.0211)	Loss 1.5392 (2.3483)	
+71
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [72][10/68]	Time 0.403 (0.387)	Data 0.0279 (0.0224)	Loss 2.4271 (2.7638)	
+Epoch: [72][20/68]	Time 0.356 (0.381)	Data 0.0180 (0.0207)	Loss 3.2724 (2.9149)	
+Epoch: [72][30/68]	Time 0.367 (0.382)	Data 0.0209 (0.0203)	Loss 2.1611 (2.7606)	
+Epoch: [72][40/68]	Time 0.361 (0.380)	Data 0.0239 (0.0204)	Loss 1.5624 (2.5904)	
+Epoch: [72][50/68]	Time 0.357 (0.381)	Data 0.0263 (0.0207)	Loss 1.9476 (2.4805)	
+Epoch: [72][60/68]	Time 0.350 (0.377)	Data 0.0199 (0.0206)	Loss 2.5210 (2.3737)	
+72
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [73][10/68]	Time 0.374 (0.381)	Data 0.0289 (0.0212)	Loss 2.9513 (2.9715)	
+Epoch: [73][20/68]	Time 0.372 (0.387)	Data 0.0279 (0.0213)	Loss 3.9252 (2.8439)	
+Epoch: [73][30/68]	Time 0.364 (0.382)	Data 0.0249 (0.0211)	Loss 1.9922 (2.7441)	
+Epoch: [73][40/68]	Time 0.366 (0.384)	Data 0.0249 (0.0210)	Loss 2.4693 (2.6245)	
+Epoch: [73][50/68]	Time 0.363 (0.383)	Data 0.0216 (0.0210)	Loss 1.4362 (2.4575)	
+Epoch: [73][60/68]	Time 0.451 (0.385)	Data 0.0259 (0.0212)	Loss 1.6306 (2.3251)	
+73
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [74][10/68]	Time 0.413 (0.394)	Data 0.0286 (0.0220)	Loss 3.1902 (3.0515)	
+Epoch: [74][20/68]	Time 0.489 (0.396)	Data 0.0190 (0.0214)	Loss 2.8320 (2.9494)	
+Epoch: [74][30/68]	Time 0.388 (0.393)	Data 0.0170 (0.0215)	Loss 2.8305 (2.7564)	
+Epoch: [74][40/68]	Time 0.374 (0.388)	Data 0.0150 (0.0206)	Loss 1.6950 (2.5790)	
+Epoch: [74][50/68]	Time 0.414 (0.393)	Data 0.0249 (0.0207)	Loss 1.9188 (2.4445)	
+Epoch: [74][60/68]	Time 0.388 (0.391)	Data 0.0150 (0.0205)	Loss 1.6057 (2.3694)	
+74
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [75][10/68]	Time 0.378 (0.368)	Data 0.0259 (0.0232)	Loss 3.2508 (2.8955)	
+Epoch: [75][20/68]	Time 0.387 (0.382)	Data 0.0269 (0.0243)	Loss 2.1845 (2.8410)	
+Epoch: [75][30/68]	Time 0.361 (0.377)	Data 0.0150 (0.0228)	Loss 2.6173 (2.7106)	
+Epoch: [75][40/68]	Time 0.388 (0.377)	Data 0.0140 (0.0220)	Loss 2.9499 (2.6185)	
+Epoch: [75][50/68]	Time 0.355 (0.378)	Data 0.0180 (0.0222)	Loss 2.0610 (2.5224)	
+Epoch: [75][60/68]	Time 0.362 (0.381)	Data 0.0229 (0.0219)	Loss 1.4242 (2.3781)	
+75
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [76][10/68]	Time 0.340 (0.370)	Data 0.0140 (0.0172)	Loss 2.5017 (2.9189)	
+Epoch: [76][20/68]	Time 0.382 (0.375)	Data 0.0140 (0.0195)	Loss 1.9831 (2.9332)	
+Epoch: [76][30/68]	Time 0.391 (0.373)	Data 0.0326 (0.0201)	Loss 2.4703 (2.8546)	
+Epoch: [76][40/68]	Time 0.374 (0.377)	Data 0.0150 (0.0216)	Loss 1.7480 (2.6578)	
+Epoch: [76][50/68]	Time 0.376 (0.378)	Data 0.0190 (0.0210)	Loss 1.7722 (2.4857)	
+Epoch: [76][60/68]	Time 0.409 (0.380)	Data 0.0189 (0.0207)	Loss 1.6550 (2.4086)	
+76
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [77][10/68]	Time 0.376 (0.394)	Data 0.0239 (0.0239)	Loss 2.9708 (2.9148)	
+Epoch: [77][20/68]	Time 0.371 (0.387)	Data 0.0289 (0.0223)	Loss 2.1105 (2.7495)	
+Epoch: [77][30/68]	Time 0.350 (0.387)	Data 0.0180 (0.0239)	Loss 1.9260 (2.7718)	
+Epoch: [77][40/68]	Time 0.370 (0.391)	Data 0.0160 (0.0237)	Loss 2.3572 (2.6321)	
+Epoch: [77][50/68]	Time 0.396 (0.388)	Data 0.0239 (0.0231)	Loss 1.9437 (2.4754)	
+Epoch: [77][60/68]	Time 0.365 (0.387)	Data 0.0239 (0.0233)	Loss 1.7246 (2.3649)	
+77
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [78][10/68]	Time 0.378 (0.388)	Data 0.0229 (0.0254)	Loss 2.2618 (2.9254)	
+Epoch: [78][20/68]	Time 0.371 (0.388)	Data 0.0229 (0.0241)	Loss 4.0625 (2.8957)	
+Epoch: [78][30/68]	Time 0.354 (0.390)	Data 0.0180 (0.0227)	Loss 2.1146 (2.7218)	
+Epoch: [78][40/68]	Time 0.404 (0.390)	Data 0.0279 (0.0236)	Loss 2.3034 (2.6108)	
+Epoch: [78][50/68]	Time 0.327 (0.390)	Data 0.0150 (0.0239)	Loss 2.0851 (2.5058)	
+Epoch: [78][60/68]	Time 0.431 (0.389)	Data 0.0219 (0.0238)	Loss 1.5046 (2.4199)	
+78
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [79][10/68]	Time 0.389 (0.378)	Data 0.0229 (0.0242)	Loss 3.1664 (2.9120)	
+Epoch: [79][20/68]	Time 0.366 (0.378)	Data 0.0299 (0.0237)	Loss 2.8965 (2.9334)	
+Epoch: [79][30/68]	Time 0.416 (0.383)	Data 0.0329 (0.0238)	Loss 1.5995 (2.7917)	
+Epoch: [79][40/68]	Time 0.394 (0.382)	Data 0.0150 (0.0231)	Loss 2.6314 (2.6316)	
+Epoch: [79][50/68]	Time 0.379 (0.381)	Data 0.0199 (0.0230)	Loss 2.2080 (2.4817)	
+Epoch: [79][60/68]	Time 0.420 (0.381)	Data 0.0309 (0.0227)	Loss 1.5342 (2.3985)	
+79
+TripletLoss(
+  (ranking_loss): MarginRankingLoss()
+  (xent): CrossEntropyLoss(
+    (logsoftmax): LogSoftmax(dim=1)
+  )
+)
+Using OF
+Epoch: [80][10/68]	Time 0.386 (0.383)	Data 0.0379 (0.0262)	Loss 4.0405 (3.0615)	
+Epoch: [80][20/68]	Time 0.371 (0.382)	Data 0.0180 (0.0222)	Loss 2.1009 (2.8662)	
+Epoch: [80][30/68]	Time 0.408 (0.379)	Data 0.0289 (0.0223)	Loss 2.1242 (2.7233)	
+Epoch: [80][40/68]	Time 0.395 (0.380)	Data 0.0219 (0.0229)	Loss 1.9684 (2.6212)	
+Epoch: [80][50/68]	Time 0.393 (0.378)	Data 0.0239 (0.0222)	Loss 1.3391 (2.4694)	
+Epoch: [80][60/68]	Time 0.382 (0.381)	Data 0.0279 (0.0229)	Loss 1.5041 (2.3465)	
+==> Test
+Evaluating market1501 ...
+# Using Flip Eval
+Extracted features for query set, obtained 3368-by-3072 matrix
+Extracted features for gallery set, obtained 15913-by-3072 matrix
+==> BatchTime(s)/BatchSize(img): 0.068/100
+Computing CMC and mAP
+Results ----------
+mAP: 18.33%
+CMC curve
+Rank-1  : 36.28%
+Rank-5  : 58.46%
+Rank-10 : 68.29%
+Rank-20 : 77.23%
+------------------
+Save! 0 0.36282662
+Finished. Total elapsed time (h:m:s): 0:47:18. Training time (h:m:s): 0:39:10.
+=> Show summary
+market1501 (source)
+- epoch 80	 rank1 36.3%
