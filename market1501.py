@@ -45,6 +45,7 @@ class Market1501(BaseImageDataset):
         train = self._process_dir(self.train_dir, relabel=True)
         query = self._process_dir(self.query_dir, relabel=False)
         gallery = self._process_dir(self.gallery_dir, relabel=False)
+        ######对标签进行划分，我们进行了1%，5%，10%，20%，40%的划分。
         label_train = train[:5457]
         unlabel_train = train[5457:]
 
